@@ -6,13 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prettify": "prettier --write ."
   },
   "dependencies": {
     "@react-google-maps/api": "^2.12.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "prettier": "prettier ."
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.17",
