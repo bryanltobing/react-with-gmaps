@@ -1,34 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import { useLoadScript, GoogleMap, Marker } from "@react-google-maps/api";
 
-function App() {
-  const [count, setCount] = useState(0)
+const getCurrentPosition = (): Promise<GeolocationPosition> =>
+  new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+
+const Map = () => {
+  const [center, setCenter] = useState<google.maps.LatLngLiteral>({
+    lat: -6.2,
+    lng: 106.816666,
+  });
+
+  useEffect(() => {
+    getCurrentPosition().then(({ coords }) => {
+      setCenter({ lat: coords.latitude, lng: coords.longitude });
+    });
+  }, []);
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
-}
+    <>
+      <GoogleMap
+        zoom={10}
+        center={center}
+        mapContainerStyle={{ width: "100%", height: "100%" }}
+      >
+        <Marker position={center} />
+      </GoogleMap>
+    </>
+  );
+};
 
-export default App
+const App = () => {
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_MAPS_API_KEY,
+  });
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        padding: "16px",
+        boxSizing: "border-box",
+      }}
+    >
+      <div style={{ height: "50%" }}>
+        <Map />
+      </div>
+      <div style={{ height: "50%" }}>
+        <Map />
+      </div>
+    </div>
+  );
+};
+
+export default App;
